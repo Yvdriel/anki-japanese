@@ -69,7 +69,8 @@ export async function GET(
     const filename = generateFilename(deck.name, deck.version);
 
     // Return as download
-    return new NextResponse(apkgBuffer, {
+    // Convert Node.js Buffer to Uint8Array for NextResponse
+    return new NextResponse(new Uint8Array(apkgBuffer), {
       status: 200,
       headers: {
         "Content-Type": "application/apkg",
