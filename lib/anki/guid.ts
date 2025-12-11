@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 /**
  * Generate a stable GUID for an Anki note based on the primary key.
@@ -15,9 +15,9 @@ import crypto from 'crypto';
 export function generateStableGuid(primaryKey: string): string {
   // Use SHA-256 to hash the primary key
   const hash = crypto
-    .createHash('sha256')
-    .update(primaryKey, 'utf8')
-    .digest('hex');
+    .createHash("sha256")
+    .update(primaryKey, "utf8")
+    .digest("hex");
 
   // Return first 32 characters (standard length for Anki GUIDs)
   return hash.substring(0, 32);

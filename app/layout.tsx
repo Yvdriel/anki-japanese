@@ -32,7 +32,9 @@ export default function RootLayout({
               <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link href="/" className="hover:opacity-90 transition">
                   <h1 className="text-2xl font-bold">Anki Tools</h1>
-                  <p className="text-blue-100 text-sm">Japanese Flashcard Generator</p>
+                  <p className="text-blue-100 text-sm">
+                    Japanese Flashcard Generator
+                  </p>
                 </Link>
                 <div className="flex items-center gap-4">
                   <SignedOut>

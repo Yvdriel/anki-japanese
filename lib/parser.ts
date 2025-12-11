@@ -6,10 +6,10 @@
  */
 
 export interface ParsedCard {
-  primaryKey: string;   // Full first line: "先（さき、まず、セン）"
-  kanji: string;        // Just the kanji: "先"
-  readings: string;     // Just the readings: "さき、まず、セン"
-  definition: string;   // English definitions
+  primaryKey: string; // Full first line: "先（さき、まず、セン）"
+  kanji: string; // Just the kanji: "先"
+  readings: string; // Just the readings: "さき、まず、セン"
+  definition: string; // English definitions
 }
 
 export interface ParseResult {
@@ -24,7 +24,7 @@ export interface ParseResult {
  * @returns ParseResult with cards, errors, and warnings
  */
 export function parseVocab(input: string): ParseResult {
-  const lines = input.split('\n');
+  const lines = input.split("\n");
   const cards: ParsedCard[] = [];
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -49,8 +49,10 @@ export function parseVocab(input: string): ParseResult {
     }
 
     // Check for blank line separator (allow missing at end of input)
-    if (i + 2 < lines.length && line3 && line3.trim() !== '') {
-      warnings.push(`Line ${i + 3}: Expected blank line, got "${line3.substring(0, 30)}..."`);
+    if (i + 2 < lines.length && line3 && line3.trim() !== "") {
+      warnings.push(
+        `Line ${i + 3}: Expected blank line, got "${line3.substring(0, 30)}..."`
+      );
     }
 
     // Parse the first line to extract kanji and readings
@@ -62,14 +64,16 @@ export function parseVocab(input: string): ParseResult {
 
       // Validate definition length
       if (line2.length > 500) {
-        warnings.push(`Card "${line1}": Very long definition (${line2.length} chars)`);
+        warnings.push(
+          `Card "${line1}": Very long definition (${line2.length} chars)`
+        );
       }
 
       cards.push({
         primaryKey: line1,
         kanji: kanji.trim(),
         readings: readings.trim(),
-        definition: line2
+        definition: line2,
       });
     } else {
       // No parentheses - likely kana-only word
@@ -78,8 +82,8 @@ export function parseVocab(input: string): ParseResult {
       cards.push({
         primaryKey: line1,
         kanji: line1,
-        readings: '',
-        definition: line2
+        readings: "",
+        definition: line2,
       });
     }
   }
@@ -112,9 +116,20 @@ export function validateCards(cards: ParsedCard[]): string[] {
     }
 
     // Check for unusual characters that might not display well
-    if (/[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\u3400-\u4dbf（）、。]/.test(card.kanji)) {
+    if (
+      /[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\u3400-\u4dbf（）、。]/.test(
+        card.kanji
+      )
+    ) {
       // Contains characters outside common Japanese ranges
-      if (/[^\x00-\x7F]/.test(card.kanji.replace(/[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\u3400-\u4dbf（）、。]/g, ''))) {
+      if (
+        /[^\x00-\x7F]/.test(
+          card.kanji.replace(
+            /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf\u3400-\u4dbf（）、。]/g,
+            ""
+          )
+        )
+      ) {
         warnings.push(`Unusual characters in: "${card.kanji}"`);
       }
     }

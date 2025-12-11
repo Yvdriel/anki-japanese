@@ -1,4 +1,4 @@
-import { PrismaClient } from '@/app/generated/prisma';
+import { PrismaClient } from "@/app/generated/prisma";
 
 /**
  * Prisma Client singleton
@@ -14,10 +14,13 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
   });
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
@@ -35,15 +38,15 @@ export async function getDeckWithCards(deckId: string) {
     where: { id: deckId },
     include: {
       cards: {
-        orderBy: { createdAt: 'asc' }
+        orderBy: { createdAt: "asc" },
       },
       user: {
         select: {
           id: true,
-          email: true
-        }
-      }
-    }
+          email: true,
+        },
+      },
+    },
   });
 }
 
@@ -55,10 +58,10 @@ export async function getAllDecks(userId: string) {
     where: { userId },
     include: {
       _count: {
-        select: { cards: true }
-      }
+        select: { cards: true },
+      },
     },
-    orderBy: { updatedAt: 'desc' }
+    orderBy: { updatedAt: "desc" },
   });
 }
 
@@ -67,15 +70,15 @@ export async function getAllDecks(userId: string) {
  */
 export async function getOrCreateUser(clerkId: string, email?: string) {
   let user = await prisma.user.findUnique({
-    where: { clerkId }
+    where: { clerkId },
   });
 
   if (!user) {
     user = await prisma.user.create({
       data: {
         clerkId,
-        email
-      }
+        email,
+      },
     });
   }
 

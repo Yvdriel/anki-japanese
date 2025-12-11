@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth } from "@clerk/nextjs/server";
 
 /**
  * Session management utilities using Clerk
@@ -12,7 +12,7 @@ export async function getClerkUserId(): Promise<string> {
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error('Unauthorized. Please sign in to continue.');
+    throw new Error("Unauthorized. Please sign in to continue.");
   }
 
   return userId;

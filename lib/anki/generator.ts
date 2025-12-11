@@ -1,8 +1,8 @@
-import Database from 'better-sqlite3';
-import JSZip from 'jszip';
-import { tmpdir } from 'os';
-import { join } from 'path';
-import { unlinkSync } from 'fs';
+import Database from "better-sqlite3";
+import JSZip from "jszip";
+import { tmpdir } from "os";
+import { join } from "path";
+import { unlinkSync } from "fs";
 
 export interface CardData {
   kanji: string;
@@ -49,12 +49,12 @@ export async function generateApkg(deckData: DeckData): Promise<Buffer> {
 
     // Create .apkg (zip file)
     const zip = new JSZip();
-    zip.file('collection.anki2', dbBuffer);
-    zip.file('media', '{}'); // Empty media file
+    zip.file("collection.anki2", dbBuffer);
+    zip.file("media", "{}"); // Empty media file
 
     const apkgBuffer = await zip.generateAsync({
-      type: 'nodebuffer',
-      compression: 'DEFLATE'
+      type: "nodebuffer",
+      compression: "DEFLATE",
     });
 
     // Clean up temp file
@@ -163,14 +163,18 @@ function createAnkiSchema(db: Database.Database) {
 /**
  * Insert collection metadata
  */
-function insertCollection(db: Database.Database, deckId: number, deckName: string) {
+function insertCollection(
+  db: Database.Database,
+  deckId: number,
+  deckName: string
+) {
   const now = Date.now();
   const timestamp = Math.floor(now / 1000);
 
   const models = {
     [MODEL_ID]: {
       id: MODEL_ID,
-      name: 'Japanese Vocabulary',
+      name: "Japanese Vocabulary",
       type: 0,
       mod: timestamp,
       usn: -1,
@@ -178,19 +182,40 @@ function insertCollection(db: Database.Database, deckId: number, deckName: strin
       did: deckId,
       tmpls: [
         {
-          name: 'Card 1',
+          name: "Card 1",
           ord: 0,
           qfmt: '<div class="kanji">{{Kanji}}</div>',
           afmt: '<div class="kanji">{{Kanji}}</div>\n<hr id="answer">\n<div class="reading">{{hint:Reading}}</div>\n<div class="definition">{{Definition}}</div>',
-          bqfmt: '',
-          bafmt: '',
+          bqfmt: "",
+          bafmt: "",
           did: null,
-        }
+        },
       ],
       flds: [
-        { name: 'Kanji', ord: 0, sticky: false, rtl: false, font: 'Arial', size: 20 },
-        { name: 'Reading', ord: 1, sticky: false, rtl: false, font: 'Arial', size: 20 },
-        { name: 'Definition', ord: 2, sticky: false, rtl: false, font: 'Arial', size: 20 }
+        {
+          name: "Kanji",
+          ord: 0,
+          sticky: false,
+          rtl: false,
+          font: "Arial",
+          size: 20,
+        },
+        {
+          name: "Reading",
+          ord: 1,
+          sticky: false,
+          rtl: false,
+          font: "Arial",
+          size: 20,
+        },
+        {
+          name: "Definition",
+          ord: 2,
+          sticky: false,
+          rtl: false,
+          font: "Arial",
+          size: 20,
+        },
       ],
       css: `.card {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -225,11 +250,11 @@ a.hint {
   color: #0066cc;
   border-bottom: 1px dashed #0066cc;
 }`,
-      latexPre: '',
-      latexPost: '',
+      latexPre: "",
+      latexPost: "",
       latexsvg: false,
-      req: [[0, 'all', [0]]]
-    }
+      req: [[0, "all", [0]]],
+    },
   };
 
   const decks = {
@@ -244,15 +269,15 @@ a.hint {
       timeToday: [0, 0],
       collapsed: false,
       browserCollapsed: false,
-      desc: '',
+      desc: "",
       dyn: 0,
       conf: 1,
       extendNew: 0,
-      extendRev: 0
+      extendRev: 0,
     },
     1: {
       id: 1,
-      name: 'Default',
+      name: "Default",
       mod: timestamp,
       usn: -1,
       lrnToday: [0, 0],
@@ -261,18 +286,18 @@ a.hint {
       timeToday: [0, 0],
       collapsed: false,
       browserCollapsed: false,
-      desc: '',
+      desc: "",
       dyn: 0,
       conf: 1,
       extendNew: 0,
-      extendRev: 0
-    }
+      extendRev: 0,
+    },
   };
 
   const dconf = {
     1: {
       id: 1,
-      name: 'Default',
+      name: "Default",
       mod: timestamp,
       usn: -1,
       maxTaken: 60,
@@ -285,7 +310,7 @@ a.hint {
         initialFactor: 2500,
         ints: [1, 4, 0],
         order: 1,
-        perDay: 20
+        perDay: 20,
       },
       rev: {
         bury: false,
@@ -293,23 +318,23 @@ a.hint {
         ivlFct: 1,
         maxIvl: 36500,
         perDay: 200,
-        hardFactor: 1.2
+        hardFactor: 1.2,
       },
       lapse: {
         delays: [10],
         leechAction: 0,
         leechFails: 8,
         minInt: 1,
-        mult: 0
-      }
-    }
+        mult: 0,
+      },
+    },
   };
 
   const conf = {
     nextPos: 1,
     estTimes: true,
     activeDecks: [deckId],
-    sortType: 'noteFld',
+    sortType: "noteFld",
     timeLim: 0,
     sortBackwards: false,
     addToCur: true,
@@ -318,13 +343,15 @@ a.hint {
     newSpread: 0,
     dueCounts: true,
     curModel: MODEL_ID,
-    collapseTime: 1200
+    collapseTime: 1200,
   };
 
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO col (id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags)
     VALUES (1, ?, ?, ?, 11, 0, 0, 0, ?, ?, ?, ?, '{}')
-  `).run(
+  `
+  ).run(
     timestamp,
     timestamp,
     timestamp,
@@ -346,7 +373,11 @@ function insertModel(db: Database.Database) {
 /**
  * Insert all cards
  */
-function insertCards(db: Database.Database, deckData: DeckData, deckId: number) {
+function insertCards(
+  db: Database.Database,
+  deckData: DeckData,
+  deckId: number
+) {
   const now = Date.now();
   const timestamp = Math.floor(now / 1000);
 
@@ -358,7 +389,7 @@ function insertCards(db: Database.Database, deckData: DeckData, deckId: number) 
     const cardId = noteId + 1; // Card ID slightly offset from note ID
 
     // Fields separated by \x1f
-    const fields = [card.kanji, card.readings, card.definition].join('\x1f');
+    const fields = [card.kanji, card.readings, card.definition].join("\x1f");
 
     // Sort field (first field for sorting)
     const sortField = card.kanji;
@@ -367,16 +398,20 @@ function insertCards(db: Database.Database, deckData: DeckData, deckId: number) 
     const checksum = simpleChecksum(sortField);
 
     // Insert note
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO notes (id, guid, mid, mod, usn, tags, flds, sfld, csum, flags, data)
       VALUES (?, ?, ?, ?, -1, '', ?, ?, ?, 0, '')
-    `).run(noteId, card.guid, MODEL_ID, timestamp, fields, sortField, checksum);
+    `
+    ).run(noteId, card.guid, MODEL_ID, timestamp, fields, sortField, checksum);
 
     // Insert card
-    db.prepare(`
+    db.prepare(
+      `
       INSERT INTO cards (id, nid, did, ord, mod, usn, type, queue, due, ivl, factor, reps, lapses, left, odue, odid, flags, data)
       VALUES (?, ?, ?, 0, ?, -1, 0, 0, ?, 0, 0, 0, 0, 0, 0, 0, 0, '')
-    `).run(cardId, noteId, deckId, timestamp, i + 1);
+    `
+    ).run(cardId, noteId, deckId, timestamp, i + 1);
   }
 }
 
@@ -388,7 +423,7 @@ function simpleChecksum(text: string): number {
   for (let i = 0; i < text.length && i < 8; i++) {
     hash = hash * 31 + text.charCodeAt(i);
   }
-  return hash & 0x7FFFFFFF; // Keep positive
+  return hash & 0x7fffffff; // Keep positive
 }
 
 /**
@@ -398,7 +433,7 @@ function hashCode(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return hash;
@@ -410,16 +445,16 @@ function hashCode(str: string): number {
 export function validateDeckData(deckData: DeckData): string[] {
   const errors: string[] = [];
 
-  if (!deckData.name || deckData.name.trim() === '') {
-    errors.push('Deck name is required');
+  if (!deckData.name || deckData.name.trim() === "") {
+    errors.push("Deck name is required");
   }
 
   if (!deckData.cards || deckData.cards.length === 0) {
-    errors.push('Deck must contain at least one card');
+    errors.push("Deck must contain at least one card");
   }
 
   if (deckData.cards.length > 10000) {
-    errors.push('Deck contains too many cards (max 10,000)');
+    errors.push("Deck contains too many cards (max 10,000)");
   }
 
   for (let i = 0; i < deckData.cards.length; i++) {
@@ -446,14 +481,14 @@ export function validateDeckData(deckData: DeckData): string[] {
  */
 export function generateFilename(deckName: string, version?: number): string {
   let sanitized = deckName
-    .replace(/[^a-zA-Z0-9\s\-_]/g, '')
-    .replace(/\s+/g, '_')
+    .replace(/[^a-zA-Z0-9\s\-_]/g, "")
+    .replace(/\s+/g, "_")
     .substring(0, 50);
 
   if (!sanitized) {
-    sanitized = 'anki_deck';
+    sanitized = "anki_deck";
   }
 
-  const versionSuffix = version ? `_v${version}` : '';
+  const versionSuffix = version ? `_v${version}` : "";
   return `${sanitized}${versionSuffix}.apkg`;
 }

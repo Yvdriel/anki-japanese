@@ -24,11 +24,11 @@ export interface NoteType {
  * - Definition: English definition
  */
 export const JAPANESE_VOCAB_NOTE_TYPE: NoteType = {
-  name: 'Japanese Vocabulary',
-  fields: ['Kanji', 'Reading', 'Definition'],
+  name: "Japanese Vocabulary",
+  fields: ["Kanji", "Reading", "Definition"],
   templates: [
     {
-      name: 'Recognition',
+      name: "Recognition",
       // Front: Show only kanji
       qfmt: '<div class="kanji">{{Kanji}}</div>',
       // Back: Show kanji, hint for reading, and definition

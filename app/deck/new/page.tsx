@@ -1,67 +1,67 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { VocabInput } from '@/components/VocabInput';
-import { CardPreview } from '@/components/CardPreview';
-import { ParseResult } from '@/lib/parser';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { VocabInput } from "@/components/VocabInput";
+import { CardPreview } from "@/components/CardPreview";
+import { ParseResult } from "@/lib/parser";
 
 export default function NewDeckPage() {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [parseResult, setParseResult] = useState<ParseResult>({
     cards: [],
     errors: [],
-    warnings: []
+    warnings: [],
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validation
     if (!name.trim()) {
-      setError('Deck name is required');
+      setError("Deck name is required");
       return;
     }
 
     if (parseResult.errors.length > 0) {
-      setError('Please fix parsing errors before creating the deck');
+      setError("Please fix parsing errors before creating the deck");
       return;
     }
 
     if (parseResult.cards.length === 0) {
-      setError('Please add at least one card');
+      setError("Please add at least one card");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('/api/decks', {
-        method: 'POST',
+      const response = await fetch("/api/decks", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: name.trim(),
           description: description.trim() || undefined,
-          cards: parseResult.cards
-        })
+          cards: parseResult.cards,
+        }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to create deck');
+        throw new Error(data.error || "Failed to create deck");
       }
 
       const data = await response.json();
       router.push(`/deck/${data.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
       setLoading(false);
     }
   };
@@ -77,7 +77,10 @@ export default function NewDeckPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Deck Name *
               </label>
               <input
@@ -92,7 +95,10 @@ export default function NewDeckPage() {
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Description (optional)
               </label>
               <textarea
@@ -131,7 +137,7 @@ export default function NewDeckPage() {
         <div className="flex gap-4">
           <button
             type="button"
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
             disabled={loading}
           >
@@ -140,9 +146,13 @@ export default function NewDeckPage() {
           <button
             type="submit"
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={loading || parseResult.cards.length === 0 || parseResult.errors.length > 0}
+            disabled={
+              loading ||
+              parseResult.cards.length === 0 ||
+              parseResult.errors.length > 0
+            }
           >
-            {loading ? 'Creating...' : 'Create Deck'}
+            {loading ? "Creating..." : "Create Deck"}
           </button>
         </div>
       </form>
