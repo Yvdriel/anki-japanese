@@ -20,7 +20,7 @@ export default async function Home() {
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="font-semibold text-lg mb-2">Easy Deck Creation</h3>
             <p className="text-gray-600">
-              Paste your vocabulary list and we'll automatically create
+              Paste your vocabulary list and we&apos;ll automatically create
               flashcards
             </p>
           </div>
@@ -61,7 +61,7 @@ export default async function Home() {
       {decks.length === 0 ? (
         <div className="text-center py-16 bg-gray-50 rounded-lg">
           <p className="text-gray-600 text-lg mb-4">
-            You don't have any decks yet.
+            You don&apos;t have any decks yet.
           </p>
           <Link
             href="/deck/new"
