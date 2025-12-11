@@ -29,7 +29,8 @@ Each entry consists of:
 
 - **Framework**: Next.js 15 with App Router
 - **Database**: PostgreSQL with Prisma ORM
-- **Anki Generation**: genanki library (handles large decks)
+- **Authentication**: Clerk
+- **Anki Generation**: Custom implementation using better-sqlite3 and JSZip
 - **Styling**: Tailwind CSS
 - **Deployment**: Vercel (optimized)
 
@@ -51,11 +52,12 @@ Each entry consists of:
    Create a `.env.local` file:
    ```bash
    # Database (example with local PostgreSQL)
-   DATABASE_URL="postgresql://user:password@localhost:5432/anki_tools?pgbouncer=true"
+   DATABASE_URL="postgresql://user:password@localhost:5432/anki_tools"
    DIRECT_URL="postgresql://user:password@localhost:5432/anki_tools"
 
-   # Session secret (generate with: openssl rand -base64 32)
-   SESSION_SECRET="your-random-secret-here"
+   # Clerk Authentication (get from https://dashboard.clerk.com)
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+   CLERK_SECRET_KEY="sk_test_..."
    ```
 
    **For Vercel Postgres**:
@@ -63,7 +65,10 @@ Each entry consists of:
    # Get these from Vercel project settings
    DATABASE_URL="postgres://..."  # Pooled connection
    DIRECT_URL="postgres://..."    # Direct connection
-   SESSION_SECRET="your-random-secret-here"
+
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+   CLERK_SECRET_KEY="sk_test_..."
    ```
 
 3. **Initialize database**:
@@ -105,7 +110,8 @@ vercel
 3. **Set environment variables**:
    - `DATABASE_URL`: Use the pooled connection string
    - `DIRECT_URL`: Use the direct connection string
-   - `SESSION_SECRET`: Generate with `openssl rand -base64 32`
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Get from Clerk dashboard
+   - `CLERK_SECRET_KEY`: Get from Clerk dashboard
 4. **Deploy**: Vercel will auto-deploy on push
 
 ## Usage
@@ -165,8 +171,8 @@ anki-tools/
 │   └── DeleteButton.tsx     # Delete button
 ├── lib/                     # Core logic
 │   ├── parser.ts           # 3-line format parser
-│   ├── db.ts               # Prisma client
-│   ├── session.ts          # Session management
+│   ├── db.ts               # Prisma client and queries
+│   ├── session.ts          # Clerk authentication utilities
 │   └── anki/               # Anki generation
 │       ├── generator.ts    # .apkg file creation
 │       ├── guid.ts         # Stable GUID generation
@@ -181,26 +187,37 @@ anki-tools/
 ```prisma
 model User {
   id        String   @id @default(cuid())
-  sessionId String   @unique
+  clerkId   String   @unique  // Clerk authentication ID
+  email     String?  @unique
   decks     Deck[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Deck {
-  id      String   @id
-  name    String
-  version Int      @default(1)
-  userId  String
-  cards   Card[]
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  version     Int      @default(1)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  cards       Card[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Card {
-  id         String   @id
+  id         String   @id @default(cuid())
+  deckId     String
+  deck       Deck     @relation(fields: [deckId], references: [id])
   primaryKey String   # Full first line (for duplicate detection)
   kanji      String   # Just kanji
   readings   String   # Just readings
   definition String   # English definition
   guid       String   # Stable GUID (SHA-256 of primaryKey)
-  deckId     String
+  noteId     BigInt?  # Optional Anki note ID
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([deckId, primaryKey])
 }
@@ -305,5 +322,7 @@ MIT
 Built with:
 - [Next.js](https://nextjs.org/)
 - [Prisma](https://www.prisma.io/)
-- [genanki](https://www.npmjs.com/package/genanki)
+- [Clerk](https://clerk.com/)
+- [better-sqlite3](https://www.npmjs.com/package/better-sqlite3)
+- [JSZip](https://www.npmjs.com/package/jszip)
 - [Tailwind CSS](https://tailwindcss.com/)
