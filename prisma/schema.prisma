@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User model - authenticated via Clerk
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique // Clerk user ID
+  email     String?  @unique
+  decks     Deck[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Deck model - represents an Anki deck
+model Deck {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  version     Int      @default(1)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cards       Card[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([updatedAt])
+}
+
+// Card model - represents an individual flashcard
+model Card {
+  id         String   @id @default(cuid())
+  deckId     String
+  deck       Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  // Primary key for duplicate detection - full first line with all readings
+  primaryKey String // e.g., "先（さき、まず、セン）"
+
+  // Parsed fields
+  kanji      String // e.g., "先"
+  readings   String // e.g., "さき、まず、セン"
+  definition String @db.Text // English definitions (can be long)
+
+  // Anki-specific fields
+  guid       String // Stable GUID for Anki note ID (SHA-256 of primaryKey)
+  noteId     BigInt? // Optional Anki note ID for tracking
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([deckId, primaryKey]) // Prevent duplicates within a deck
+  @@index([deckId])
+  @@index([guid])
+}
