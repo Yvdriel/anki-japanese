@@ -49,7 +49,7 @@ export function DeleteButton({ deckId, deckName }: DeleteButtonProps) {
   return (
     <div className="relative">
       <div className="absolute right-0 top-0 bg-white p-4 rounded-lg shadow-lg border border-gray-200 z-10 min-w-80">
-        <p className="font-semibold mb-2">Delete "{deckName}"?</p>
+        <p className="font-semibold mb-2">Delete &quot;{deckName}&quot;?</p>
         <p className="text-sm text-gray-600 mb-4">
           This will permanently delete the deck and all its cards. This action cannot be undone.
         </p>

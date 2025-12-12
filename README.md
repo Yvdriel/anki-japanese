@@ -28,18 +28,22 @@ Each entry consists of:
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Prisma 6
 - **Authentication**: Clerk
 - **Anki Generation**: Custom implementation using better-sqlite3 and JSZip
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS 4
+- **Linting**: ESLint 9
 - **Deployment**: Vercel (optimized)
 
 ## Setup Instructions
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 20.18.0 LTS (or higher in the v20.x range)
+- npm 10+
 - PostgreSQL database
+
+**Note**: This project uses Node.js v20 LTS. If you're using `nvm`, simply run `nvm use` in the project directory (the `.nvmrc` file specifies the correct version).
 
 ### Installation
 

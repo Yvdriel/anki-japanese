@@ -6,6 +6,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Anki Tools is a Next.js 15 application that converts Japanese vocabulary lists into Anki flashcard decks (.apkg files). Users paste vocabulary in a simple 3-line format, and the app generates downloadable Anki decks with stable GUIDs to support incremental updates.
 
+## Technology Stack
+
+**Runtime & Package Manager:**
+- Node.js: v20.18.0 LTS (specified in `.nvmrc`)
+- npm: 10+
+
+**Core Framework & Libraries:**
+- Next.js: 15.5.7 (App Router)
+- React: 19.x
+- TypeScript: 5.x
+
+**Database & ORM:**
+- Prisma: 6.19.1
+- PostgreSQL (via Neon or local)
+- Custom Prisma client location: `app/generated/prisma`
+
+**Styling & UI:**
+- Tailwind CSS: 4.x (CSS-based configuration)
+- PostCSS: 8.4.x with `@tailwindcss/postcss` plugin
+
+**Development Tools:**
+- ESLint: 9.x (flat config format in `eslint.config.mjs`)
+- eslint-config-next: 15.5.7
+
+**Authentication:**
+- Clerk: 6.x
+
+**Anki Generation:**
+- better-sqlite3: 12.5.0 (native module)
+- JSZip: 3.10.1
+
+**Important Notes:**
+- The project uses Node.js v20 LTS for better native module support (better-sqlite3)
+- Tailwind CSS 4 uses CSS-based configuration (`@import "tailwindcss"` in `globals.css`) instead of `tailwind.config.ts`
+- ESLint uses flat config format with FlatCompat for Next.js integration
+- The `.next` directory is ignored in ESLint config
+
 ## Development Commands
 
 ```bash

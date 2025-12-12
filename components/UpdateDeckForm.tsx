@@ -76,7 +76,7 @@ export function UpdateDeckForm({ deckId, deckName }: UpdateDeckFormProps) {
       <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
         <h3 className="text-xl font-semibold mb-4">Add More Cards</h3>
         <p className="text-gray-600 mb-4">
-          Paste additional vocabulary to add to "{deckName}". Duplicate entries will be skipped automatically.
+          Paste additional vocabulary to add to &quot;{deckName}&quot;. Duplicate entries will be skipped automatically.
         </p>
         <button
           onClick={() => setShowForm(true)}
